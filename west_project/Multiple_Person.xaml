@@ -1,0 +1,58 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:west_project"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    x:Class="west_project.Multiple_Person"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Name="Multiple_template">
+            <RelativePanel Background="Transparent" Name="UserPanel" Width="350" Margin="2,10,0,10">
+                <Ellipse Height="100" Width="100" Name="Image_Ellipse">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="Assets/nop.jpg"/>
+                    </Ellipse.Fill>
+                
+                </Ellipse>
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse" Name="Name_Block" RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                <TextBlock Text="{Binding UserId}" RelativePanel.Below="Name_Block" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse" Name="Id_Block" RelativePanel.AlignVerticalCenterWithPanel="True"/>
+            </RelativePanel>
+            
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="17*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+
+        <TextBox Name="SearchBar" MinWidth="250" PlaceholderText="Enter Search Query Here" BorderBrush="Black" Background="White" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Maps:MapControl Grid.Row="1" Name="MultiplePeopleMap" Margin="2,2,2,2" LandmarksVisible="True" Style="Aerial3DWithRoads">
+           
+        </Maps:MapControl>
+        <GridView Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollMode="Enabled"
+            ScrollViewer.IsHorizontalRailEnabled="True"
+            ItemTemplate="{StaticResource Multiple_template}" 
+            IsItemClickEnabled="True" ItemClick="UsersList_ItemClick" 
+            
+            Name="UsersList">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid MaximumRowsOrColumns="3"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+
+
+        </GridView>
+
+
+
+
+    </Grid>
+</Page>

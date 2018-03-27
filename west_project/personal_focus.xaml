@@ -1,0 +1,64 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:west_project"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    x:Class="west_project.personal_focus"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="PersonalGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="6.5*"></RowDefinition>
+            <RowDefinition Height="1.5*" ></RowDefinition>
+        </Grid.RowDefinitions>
+        <Maps:MapControl Name="Location_map" Margin="2,2,2,2" Grid.Row="0" LandmarksVisible="True" 
+                         MapElementPointerEntered="Location_map_MapElementPointerEntered"
+                         MapElementPointerExited="Location_map_MapElementPointerExited"
+                         MapElementClick="Location_map_MapElementClick" Style="Aerial3DWithRoads">
+            </Maps:MapControl>
+        <!--<Charting:Chart Name="HoG" Margin="2,2,2,2" Grid.Row="0" Visibility="Visible" >
+            <Charting:ColumnSeries Margin="0" IndependentValuePath="angle" DependentValuePath="gradient_num" IsSelectionEnabled="True"
+                                   CharacterSpacing="5"/>
+        </Charting:Chart>-->
+        <TextBlock Name="TagBox" Grid.Row="0" HorizontalAlignment="Right" Margin="0,5,10,0" VerticalAlignment="Top" TextAlignment="Left" TextWrapping="WrapWholeWords" Width="250"  Foreground="Red" Text="Image tags displayed here"/>
+        <MediaPlayerElement Name="Audio_player" Grid.Row="1" 
+                                AutoPlay="False" AreTransportControlsEnabled="True"
+                                 Visibility="Visible" >
+            <MediaPlayerElement.TransportControls>
+                <MediaTransportControls IsFullWindowButtonVisible="False" IsFullWindowEnabled="False"
+                                            IsStopButtonVisible="True" IsStopEnabled="True"/>
+            </MediaPlayerElement.TransportControls>
+        </MediaPlayerElement>
+        
+        <RelativePanel x:Name="PhotoTextPanel">
+            <Image x:Name="Image_spot" RelativePanel.AlignTopWithPanel="True"
+                   Source="Assets/D28.gif" Height="250" Width="250"
+                   
+                   DoubleTapped="Image_spot_DoubleTapped" IsDoubleTapEnabled="True"
+                    Visibility="Collapsed">
+               
+                
+            </Image>
+            
+            <Button Name="Close_Button" Height="30" Width="40" Content="Close" FontSize="8"
+                    Background="Red" Foreground="White" FontFamily="Segoe UI Emoji" Visibility="Collapsed" Click="Close_Button_Click"/>
+
+        </RelativePanel>
+        <Image Name="BigPhotoView" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" 
+                  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"
+                  >
+        </Image>
+        <Image Name="RunningImage" Height="50" Width="30" Visibility="Collapsed" Source="Assets/runner.gif" />
+        <Image Name="WalkingImage" Height="50" Width="30" Visibility="Collapsed" Source="Assets/walker.gif" />
+        
+
+
+
+
+
+
+
+    </Grid>
+</Page>
