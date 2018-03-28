@@ -36,6 +36,7 @@ namespace west_project
         private Geopoint StartPoint { get; set; }
         private List<Location_Data> locationData { get; set; }
         private List<string> tags { get; set; }
+        private StorageFile video { get; set; } //If the media is video
         //private List<List<hog_records>> hogRecords { get; set; }
 
         public string Name
@@ -103,6 +104,15 @@ namespace west_project
 
             }
         }
+        public StorageFile Video
+        {
+            get { return this.video; }
+            set
+            {
+                this.video = value;
+                this.OnPropertyChanged();
+            }
+        }
 
         //public List<List<hog_records>> HogRecords
         //{
@@ -114,6 +124,7 @@ namespace west_project
 
         //    }
         //}
+
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 

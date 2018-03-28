@@ -49,6 +49,7 @@ namespace west_project
         static List<string> Tag_list = new List<string>(); //List of Tags (3 per image)
         Image MovementGif = new Image();
         string Audio_track_name = null;
+        string Video_file_name = null;   // In case the user has a video instead of Audio
         static int Image_count = 0; //To maintain the count of the image being displayed
         static int Location_count = 0; //To maintain count of location being displayed
         static bool Timer_status = false;
@@ -56,6 +57,9 @@ namespace west_project
         double TimePerImage = 0.6;
         int NumberofImagesPerLoc = 10;
         User user = null;
+        MapControl Location_map = null;
+      
+        
        
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -69,44 +73,83 @@ namespace west_project
             //Setup the list of locations with the initial location in the beginning using Location_Data structure in Location_list
             Location_list = user.LocationData;
             
-            //Setup the Image names with the first image being the initial image in Image_List
-            IReadOnlyList<StorageFile> fileList = await user.Image.GetFilesAsync();  //Get all file details as a readonly list
-            Debug.WriteLine(fileList.Count);
-            foreach (StorageFile file in fileList)
+
+            //Setup Images and Audio only if video file does not exist
+            if(user.Video == null)
             {
-                BasicProperties BasicProp = await file.GetBasicPropertiesAsync();
-                if(BasicProp.Size != 0)                          //Do not add 0 byte files.
-                    Image_list.Add(file);
-            }   //Creates a list of files
+                //Which map to use
+                Location_map = Location_map_image;
+                Location_map.Visibility = Visibility.Visible;
 
-            //Setup the Tags in the same order as images
-            Tag_list = user.Tags;
+                //Which Display to use
+                PhotoTextPanel.Visibility = Visibility.Visible;
 
-            //Debug.WriteLine(Image_list);
-
-            //Test Image list
-            //StorageFolder AppInstalledFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;    //Gets Current installed location
-            //StorageFolder Assets = await AppInstalledFolder.GetFolderAsync("Assets");          //Gets current assets folder
-            //StorageFolder TestImages = await Assets.GetFolderAsync("TestPhotos");
+                //Which mediaPlayer to use
+                Audio_player.Visibility = Visibility.Visible;
 
 
+                //Setup the Image names with the first image being the initial image in Image_List
+                IReadOnlyList<StorageFile> fileList = await user.Image.GetFilesAsync();  //Get all file details as a readonly list
+                Debug.WriteLine(fileList.Count);
+                foreach (StorageFile file in fileList)
+                {
+                    BasicProperties BasicProp = await file.GetBasicPropertiesAsync();
+                    if (BasicProp.Size != 0)                          //Do not add 0 byte files.
+                        Image_list.Add(file);
+                }   //Creates a list of files
+
+                //Setup the Tags in the same order as images
+                Tag_list = user.Tags;
+
+                //Debug.WriteLine(Image_list);
+
+                //Test Image list
+                //StorageFolder AppInstalledFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;    //Gets Current installed location
+                //StorageFolder Assets = await AppInstalledFolder.GetFolderAsync("Assets");          //Gets current assets folder
+                //StorageFolder TestImages = await Assets.GetFolderAsync("TestPhotos");
+
+
+                //Setup the audio track  in Audio_track_name
+                Audio_track_name = user.Audio.Name;
+            }
 
 
 
-            //Setup the audio track  in Audio_track_name
-            Audio_track_name = user.Audio.Name;
+            
+
+            //Setup the video track in Video_track_name
+            if (user.Video != null)
+            {
+                Location_map = Location_map_video;
+                Location_map.Visibility = Visibility.Visible;
+                Video_Spot.Visibility = Visibility.Visible;
+                Video_file_name = user.Video.Name;
+            }
 
 
             MovementGif.Height = 50;
             MovementGif.Width = 30;
             MovementGif.Source = new BitmapImage(new Uri("ms-appx:///Assets/walker.gif", UriKind.Absolute));
             MovementGif.Visibility = Visibility.Collapsed;
+
             //Initial UI setup
             SetupMap(); //Setup the initial Location and the overall route
-            SetupAudio();  //Setup the audio player
-            SetupImage(); //Setup the Initial Image
+            
+            if(user.Video == null)
+            {
+                SetupImage(); //Setup the Initial Image
+                SetupAudio();  //Setup the audio player
+                SetupImageRate();
+            }
+            else
+            {
+                SetupVideo();
+                SetupRate();
+            }
+           
 
-            SetupImageRate();
+           
+            
             //SetupMovementGif
 
             //MovementGif.Source = new BitmapImage(new Uri("ms-appx:///Assets/runner.gif", UriKind.Absolute));
@@ -117,14 +160,17 @@ namespace west_project
 
 
         }
-        protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+
+        private async void SetupRate()
         {
-            base.OnNavigatingFrom(e);
-            //Kill Audio when navigated away
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Audio_player?.MediaPlayer.Dispose();
-            });
+            VideoProperties videoProp = await user.Video.Properties.GetVideoPropertiesAsync();
+            Duration Video_span = videoProp.Duration;
+            TimePerImage = 1;
+            //NumberofImagesPerLoc = Video_span.TimeSpan.Seconds / Location_list.Count;
+            NumberofImagesPerLoc = 20;
+
+            //The idea here is that NumberofImagesPerLoc*TimePerImage = Time per location.
+
         }
 
         private async void SetupImageRate()
@@ -137,6 +183,39 @@ namespace west_project
             NumberofImagesPerLoc = Image_list.Count / Location_list.Count;
 
         }
+
+        private void SetupVideo()
+        {
+
+            
+
+            //Set Source
+            Video_Spot.Source = MediaSource.CreateFromStorageFile(user.Video);
+
+              
+
+            //Binding State changed function to audio player so as to sync other elements on screen
+            Video_Spot.MediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            Video_Spot.MediaPlayer.PlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
+            Video_Spot.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+
+            //Set UI
+            Audio_player.Visibility = Visibility.Collapsed;
+
+
+        }
+
+        protected async override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            base.OnNavigatingFrom(e);
+            //Kill Audio when navigated away
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Audio_player?.MediaPlayer.Dispose();
+            });
+        }
+
+      
 
 
 
@@ -201,17 +280,20 @@ namespace west_project
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 async () =>
                 {
+                   if(user.Video == null)
+                    {
+                        Image_count = (int)((((sender)).Position.TotalSeconds / TimePerImage));
+                        if (Image_count >= Image_list.Count - 1)
+                        {
+                            Image_count = Image_list.Count - 1;
+                        }
+                        Image_spot.Source = await LoadImage(Image_list[Image_count]);
+                        BigPhotoView.Source = await LoadImage(Image_list[Image_count]);
+                        if (Tag_list != null)
+                        {
+                            TagBox.Text = Tag_list[Image_count];
+                        }
 
-                    Image_count = (int)((((sender)).Position.TotalSeconds / TimePerImage));
-                    if (Image_count >= Image_list.Count - 1)
-                    {
-                        Image_count = Image_list.Count - 1;
-                    }
-                    Image_spot.Source = await LoadImage(Image_list[Image_count]);
-                    BigPhotoView.Source = await LoadImage(Image_list[Image_count]);
-                    if (Tag_list != null)
-                    {
-                        TagBox.Text = Tag_list[Image_count];
                     }
 
                     int PreviousLocCount = Location_count;
@@ -413,7 +495,18 @@ namespace west_project
                                                          {
                                                              //Image_Control_Timer.Stop();
                                                              //Location_Control_Timer.Stop();
-                                                             Image_count = 0;
+                                                             if(user.Video == null)
+                                                             {
+                                                                 Image_count = 0;
+                                                                 Image_spot.Source = await LoadImage(Image_list[Image_count]);
+                                                                 BigPhotoView.Source = await LoadImage(Image_list[Image_count]);
+                                                                 if (Tag_list != null)
+                                                                 {
+                                                                     TagBox.Text = Tag_list[Image_count];
+                                                                 }
+
+                                                             }
+
                                                              Location_count = 0;
                                                              Geopoint DisplayPoint = CreateGeopoint();
                                                              MapIcon Location_Icon = Location_map.MapElements.FirstOrDefault(x => x is MapIcon) as MapIcon;
@@ -421,13 +514,7 @@ namespace west_project
                                                              Location_map.Center = DisplayPoint;  //Center the map here
                                                              Location_map.ZoomLevel = 14;
                                                              Timer_status = false;
-                                                             Image_spot.Source = await LoadImage(Image_list[Image_count]);
-                                                             BigPhotoView.Source = await LoadImage(Image_list[Image_count]);
-                                                             if(Tag_list != null)
-                                                             {
-                                                                 TagBox.Text = Tag_list[Image_count];
-                                                             }
-                                                                
+                                                             
 
                                                          });
                         }
@@ -453,15 +540,18 @@ namespace west_project
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
                 async () =>
                 {
-                   
-                    Image_count = 0;
-                    Timer_status = false;
-                    Image_spot.Source = await LoadImage(Image_list[Image_count]);
-                    BigPhotoView.Source = await LoadImage(Image_list[Image_count]);
-                    if (Tag_list != null)
+                    if(user.Video == null)
                     {
-                        TagBox.Text = Tag_list[Image_count];
+                        Image_count = 0;
+                        Timer_status = false;
+                        Image_spot.Source = await LoadImage(Image_list[Image_count]);
+                        BigPhotoView.Source = await LoadImage(Image_list[Image_count]);
+                        if (Tag_list != null)
+                        {
+                            TagBox.Text = Tag_list[Image_count];
+                        }
                     }
+                  
                 });
             }
         }
@@ -537,12 +627,24 @@ namespace west_project
                                       
                 }
                 //Show the image temporarily
+                
                 double X = args.Position.X;   //Get the X cordinate of Pointer
                 double Y = args.Position.Y;   //Get the Y coordinate of the pointer
-                Image_spot.Margin = new Thickness(X + 30, Y, 0, 0);
-                Close_Button.Margin = new Thickness(X + 240, Y+60, 0, 0);
-                Image_spot.Visibility = Visibility.Visible;
-                Close_Button.Visibility = Visibility.Collapsed;
+                if(user.Video == null)
+                {
+                    Image_spot.Margin = new Thickness(X + 30, Y, 0, 0);
+                    Close_Button.Margin = new Thickness(X + 240, Y + 60, 0, 0);
+                    Image_spot.Visibility = Visibility.Visible;
+                    Close_Button.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    Video_Spot.Margin = new Thickness(X + 30, Y, 0, 0);
+                    Close_Button.Margin = new Thickness(X + 240, Y + 60, 0, 0);
+                    Video_Spot.Visibility = Visibility.Visible;
+                    Close_Button.Visibility = Visibility.Collapsed;
+                }
+                
 
             }
             pointerEnterFlag = true;
@@ -562,7 +664,15 @@ namespace west_project
                     
                     if(pointerEnterFlag)
                     {
-                        Image_spot.Visibility = Visibility.Collapsed;
+                        if(user.Video == null)
+                        {
+                            Image_spot.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            Video_Spot.Visibility = Visibility.Collapsed;
+                        }
+                     
                     }
                     
 
@@ -589,11 +699,23 @@ namespace west_project
                     Location_map.GetOffsetFromLocation(ClickedIcon.Location, out MapPoint); //Converts Latitude and longitude to x and Y coordinates.
                     double X = MapPoint.X;
                     double Y = MapPoint.Y;
-                    Image_spot.Margin = new Thickness(X + 30, Y, 0, 0);
-                    Close_Button.Margin = new Thickness(X + 242, Y+55, 0, 0);
-                    Image_spot.Visibility = Visibility.Visible; //Change the state of image spot
-                    Close_Button.Visibility = Visibility.Visible;
 
+                    if(user.Video == null)
+                    {
+                        Image_spot.Margin = new Thickness(X + 30, Y, 0, 0);
+                        Close_Button.Margin = new Thickness(X + 242, Y + 55, 0, 0);
+                        Image_spot.Visibility = Visibility.Visible; //Change the state of image spot
+                        Close_Button.Visibility = Visibility.Visible;
+
+
+                    }
+                    else
+                    {
+                        Video_Spot.Margin = new Thickness(X + 30, Y, 0, 0);
+                        Close_Button.Margin = new Thickness(X + 242, Y + 55, 0, 0);
+                        Video_Spot.Visibility = Visibility.Visible; //Change the state of image spot
+                        Close_Button.Visibility = Visibility.Visible;
+                    }
 
 
                 }
@@ -605,10 +727,21 @@ namespace west_project
                     Location_map.GetOffsetFromLocation(ClickedIcon.Location, out MapPoint); //Converts Latitude and longitude to x and Y coordinates.
                     double X = MapPoint.X;
                     double Y = MapPoint.Y;
-                    Image_spot.Margin = new Thickness(X + 30, Y, 0, 0);
-                    Close_Button.Margin = new Thickness(X + 242, Y+55, 0, 0);
-                    Image_spot.Visibility = Visibility.Visible; //Change the state of image spot
-                    Close_Button.Visibility = Visibility.Visible;
+                    if(user.Video == null)
+                    {
+                        Image_spot.Margin = new Thickness(X + 30, Y, 0, 0);
+                        Close_Button.Margin = new Thickness(X + 242, Y + 55, 0, 0);
+                        Image_spot.Visibility = Visibility.Visible; //Change the state of image spot
+                        Close_Button.Visibility = Visibility.Visible;
+
+                    }
+                    else
+                    {
+                        Video_Spot.Margin = new Thickness(X + 30, Y, 0, 0);
+                        Close_Button.Margin = new Thickness(X + 242, Y + 55, 0, 0);
+                        Video_Spot.Visibility = Visibility.Visible; //Change the state of image spot
+                        Close_Button.Visibility = Visibility.Visible;
+                    }
 
 
 
@@ -623,9 +756,13 @@ namespace west_project
             //Close the image spot
             Image_spot.Visibility = Visibility.Collapsed; //Change the state of image spot
             Close_Button.Visibility = Visibility.Collapsed;
+            Video_Spot.Visibility = Visibility.Collapsed;
            
         }
 
-       
+        private void Video_Spot_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+
+        }
     }
 }

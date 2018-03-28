@@ -93,6 +93,7 @@ namespace west_project
             Windows.Storage.StorageFile AudFile = null;
             Windows.Storage.StorageFolder ImageFolder = null;
             Windows.Storage.StorageFolder JourneyFolder = null;
+            Windows.Storage.StorageFile VideoFile = null;
 
             //Boolean to check if required data is available
             bool tagBool = false;
@@ -110,29 +111,45 @@ namespace west_project
                 Windows.Storage.AccessCache.StorageApplicationPermissions.
                 FutureAccessList.AddOrReplace("JourneyFolder", JourneyFolder);
                 JourneyFS.Text = JourneyFolder.Path;
-                
 
-                ImageFolder = await JourneyFolder.GetFolderAsync("Images");
-                LocFile = await JourneyFolder.GetFileAsync("Location_Data.csv");
-
-                //Try getting Tag Data
                 try
                 {
-                    TagFile = await JourneyFolder.GetFileAsync("Tag_Data.csv");
-                    tagBool = true;
+                    //Get Image Data
+                    ImageFolder = await JourneyFolder.GetFolderAsync("Images");
+
+                    //Get Audio Data
+                    try
+                    {
+                        AudFile = await JourneyFolder.GetFileAsync("Audio.m4a");
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        AudFile = await JourneyFolder.GetFileAsync("Audio_Data.mp3");
+                    }
+
+                    //Try getting Tag Data
+                    try
+                    {
+                        TagFile = await JourneyFolder.GetFileAsync("Tag_Data.csv");
+                        tagBool = true;
+                    }
+                    catch
+                    {
+                        tagBool = false;
+                    }
+
                 }
+
                 catch
                 {
-                    tagBool = false;
+                    //Get Video File, if images not available
+                    VideoFile = await JourneyFolder.GetFileAsync("Video.mp4");
                 }
-                try
-                {
-                    AudFile = await JourneyFolder.GetFileAsync("Audio.m4a");
-                }
-                catch(FileNotFoundException)
-                {
-                    AudFile = await JourneyFolder.GetFileAsync("Audio_Data.mp3");
-                }
+                
+                //Get Location Data
+                LocFile = await JourneyFolder.GetFileAsync("Location_Data.csv");
+
+               
                 
                 int indexUser = Users.IndexOf(Users.Last(x => x.UserId == UserTag)); //Get the index of the user whose data is being loaded
 
@@ -142,13 +159,22 @@ namespace west_project
                 //Users[indexUser].UserId = await User.ChangeUserId(LocFile);
                 UserTag = Users[indexUser].UserId;
 
-                Users[indexUser].Image = ImageFolder;  //Add the user's image folder
-                Users[indexUser].Audio = AudFile;      //Add the user's audio file
-
-                if (tagBool)
+                if(VideoFile == null)
                 {
-                    Users[indexUser].Tags = await User.AddTagData(TagFile);       //Add Tag data to the user 
+                    Users[indexUser].Image = ImageFolder;  //Add the user's image folder
+                    Users[indexUser].Audio = AudFile;      //Add the user's audio file
+                    if (tagBool)
+                    {
+                        Users[indexUser].Tags = await User.AddTagData(TagFile);       //Add Tag data to the user 
+                    }
+
                 }
+                else
+                {
+                    Users[indexUser].Video = VideoFile; //Add user's video
+                }
+                
+
                
 
 

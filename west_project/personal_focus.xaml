@@ -13,34 +13,37 @@
             <RowDefinition Height="6.5*"></RowDefinition>
             <RowDefinition Height="1.5*" ></RowDefinition>
         </Grid.RowDefinitions>
-        <Maps:MapControl Name="Location_map" Margin="2,2,2,2" Grid.Row="0" LandmarksVisible="True" 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <!--Images-->
+        <Maps:MapControl Name="Location_map_image" Margin="2,2,2,2" Grid.Row="0" Grid.ColumnSpan="2" LandmarksVisible="True" 
                          MapElementPointerEntered="Location_map_MapElementPointerEntered"
                          MapElementPointerExited="Location_map_MapElementPointerExited"
-                         MapElementClick="Location_map_MapElementClick" Style="Aerial3DWithRoads">
+                         MapElementClick="Location_map_MapElementClick" Visibility="Collapsed" Style="Aerial3DWithRoads" >
             </Maps:MapControl>
-        <!--<Charting:Chart Name="HoG" Margin="2,2,2,2" Grid.Row="0" Visibility="Visible" >
-            <Charting:ColumnSeries Margin="0" IndependentValuePath="angle" DependentValuePath="gradient_num" IsSelectionEnabled="True"
-                                   CharacterSpacing="5"/>
-        </Charting:Chart>-->
-        <TextBlock Name="TagBox" Grid.Row="0" HorizontalAlignment="Right" Margin="0,5,10,0" VerticalAlignment="Top" TextAlignment="Left" TextWrapping="WrapWholeWords" Width="250"  Foreground="Red" Text="Image tags displayed here"/>
-        <MediaPlayerElement Name="Audio_player" Grid.Row="1" 
+      
+        <TextBlock Name="TagBox" Grid.Row="0" HorizontalAlignment="Right" Margin="0,5,10,0" Grid.Column="1" VerticalAlignment="Top" TextAlignment="Left" TextWrapping="WrapWholeWords" Width="250"  Foreground="Red" Text="Image tags displayed here"/>
+        <MediaPlayerElement Name="Audio_player" Grid.Row="1" Grid.ColumnSpan="2"
                                 AutoPlay="False" AreTransportControlsEnabled="True"
-                                 Visibility="Visible" >
+                                 Visibility="Collapsed" >
             <MediaPlayerElement.TransportControls>
                 <MediaTransportControls IsFullWindowButtonVisible="False" IsFullWindowEnabled="False"
                                             IsStopButtonVisible="True" IsStopEnabled="True"/>
             </MediaPlayerElement.TransportControls>
         </MediaPlayerElement>
-        
-        <RelativePanel x:Name="PhotoTextPanel">
+
+        <RelativePanel x:Name="PhotoTextPanel" Grid.ColumnSpan="2">
             <Image x:Name="Image_spot" RelativePanel.AlignTopWithPanel="True"
                    Source="Assets/D28.gif" Height="250" Width="250"
-                   
+                   Visibility="Collapsed"
                    DoubleTapped="Image_spot_DoubleTapped" IsDoubleTapEnabled="True"
-                    Visibility="Collapsed">
-               
-                
+                    >
             </Image>
+            
+         
             
             <Button Name="Close_Button" Height="30" Width="40" Content="Close" FontSize="8"
                     Background="Red" Foreground="White" FontFamily="Segoe UI Emoji" Visibility="Collapsed" Click="Close_Button_Click"/>
@@ -52,7 +55,19 @@
         </Image>
         <Image Name="RunningImage" Height="50" Width="30" Visibility="Collapsed" Source="Assets/runner.gif" />
         <Image Name="WalkingImage" Height="50" Width="30" Visibility="Collapsed" Source="Assets/walker.gif" />
+        <!--Images-->
         
+        <!--Videos-->
+        <Maps:MapControl Name="Location_map_video" Margin="2,2,2,2" Grid.Column="0" Grid.RowSpan="2" LandmarksVisible="True" 
+                          Visibility="Collapsed" Style="Aerial3DWithRoads">
+        </Maps:MapControl>
+        
+        <MediaPlayerElement x:Name="Video_Spot" AreTransportControlsEnabled="True" Grid.RowSpan="2" 
+                                RelativePanel.AlignTopWithPanel="True"  Grid.Column="1"
+                                DoubleTapped="Video_Spot_DoubleTapped" IsDoubleTapEnabled="True"
+                                Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                 />
+       
 
 
 
