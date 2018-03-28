@@ -58,6 +58,7 @@ namespace west_project
         int NumberofImagesPerLoc = 10;
         User user = null;
         MapControl Location_map = null;
+        double TimePerLocation = 0.0;
       
         
        
@@ -165,9 +166,8 @@ namespace west_project
         {
             VideoProperties videoProp = await user.Video.Properties.GetVideoPropertiesAsync();
             Duration Video_span = videoProp.Duration;
-            TimePerImage = 1;
-            //NumberofImagesPerLoc = Video_span.TimeSpan.Seconds / Location_list.Count;
-            NumberofImagesPerLoc = 20;
+            TimePerLocation = Video_span.TimeSpan.TotalSeconds / Location_list.Count;
+            
 
             //The idea here is that NumberofImagesPerLoc*TimePerImage = Time per location.
 
@@ -191,6 +191,7 @@ namespace west_project
 
             //Set Source
             Video_Spot.Source = MediaSource.CreateFromStorageFile(user.Video);
+
 
               
 
@@ -297,7 +298,15 @@ namespace west_project
                     }
 
                     int PreviousLocCount = Location_count;
-                    Location_count = (int)(((sender)).Position.TotalSeconds / (TimePerImage * NumberofImagesPerLoc));
+                    if(TimePerLocation == 0.0)
+                    {
+                        Location_count = (int)(((sender)).Position.TotalSeconds / (TimePerImage * NumberofImagesPerLoc));
+                    }
+                    else
+                    {
+                        Location_count = (int)(((sender)).Position.TotalSeconds / (TimePerLocation));
+                    }
+                    
                     if (PreviousLocCount != Location_count)
                     {
                         
