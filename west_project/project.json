@@ -4,6 +4,7 @@
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
     "NAudio": "1.8.0",
     "Newtonsoft.Json": "10.0.3",
+    "Syncfusion.SfChart.UWP": "16.1.0.32",
     "XamlAnimatedGif": "1.1.8"
   },
   "frameworks": {

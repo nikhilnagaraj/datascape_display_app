@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -26,15 +27,35 @@ namespace west_project
         }
         
     }
+
+    public class Location_Stat //Contains address and time spent
+    {
+        public string Address { get; set; }
+        public double time_spent { get; set; }
+
+        public static Location_Stat createLocStat(string address, double time_spent)
+        {
+            Location_Stat locstat = new Location_Stat();
+            locstat.Address = address;
+            locstat.time_spent = time_spent;
+            return locstat;
+        }
+    }
+
+   
+
     public class User  : INotifyPropertyChanged
     {
         
         private string name { get; set; }
         private int userId { get; set; }
         private StorageFolder image { get; set; } //The folder of the images.
+        private StorageFolder faces { get; set; }
         private StorageFile audio { get; set; }
+        private List<double> speechStats { get; set; }
         private Geopoint StartPoint { get; set; }
         private List<Location_Data> locationData { get; set; }
+        private ObservableCollection<Location_Stat> locationStat { get; set; }
         private List<string> tags { get; set; }
         private StorageFile video { get; set; } //If the media is video
         //private List<List<hog_records>> hogRecords { get; set; }
@@ -66,12 +87,30 @@ namespace west_project
                 this.OnPropertyChanged();
             }
         }
+        public StorageFolder Faces
+        {
+            get { return this.faces; }
+            set
+            {
+                this.faces = value;
+                this.OnPropertyChanged();
+            }
+        }
         public StorageFile Audio
         {
             get { return this.audio; }
             set
             {
                 this.audio = value;
+                this.OnPropertyChanged();
+            }
+        }
+        public List<double> SpeechStats
+        {
+            get { return this.speechStats; }
+            set
+            {
+                this.speechStats = value;
                 this.OnPropertyChanged();
             }
         }
@@ -94,6 +133,16 @@ namespace west_project
             }
         }
 
+        public ObservableCollection<Location_Stat> LocationStat
+        {
+            get { return this.locationStat; }
+            set
+            {
+                this.locationStat = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         public List<string> Tags
         {
             get { return this.tags; }
@@ -104,6 +153,7 @@ namespace west_project
 
             }
         }
+
         public StorageFile Video
         {
             get { return this.video; }
@@ -113,6 +163,8 @@ namespace west_project
                 this.OnPropertyChanged();
             }
         }
+
+
 
         //public List<List<hog_records>> HogRecords
         //{
@@ -137,7 +189,7 @@ namespace west_project
 
 
 
-        public static User CreateUser(string Name, string ImagePath, int UserId, Geopoint point = null, Windows.Storage.StorageFile LocFile = null, Windows.Storage.StorageFile TagFile = null, Windows.Storage.StorageFile HOGFile = null)
+        public static User CreateUser(string Name, string ImagePath, int UserId, Geopoint point = null, List<double> SpeechStatistics = null, Windows.Storage.StorageFolder Facefolder = null, Windows.Storage.StorageFile LocFile = null, Windows.Storage.StorageFile TagFile = null, Windows.Storage.StorageFile LocStatFile = null)
         {
             User newUser = new User();
             newUser.Name = Name;
@@ -200,6 +252,36 @@ namespace west_project
 
 
         }
+
+        public static async Task<ObservableCollection<Location_Stat>> AddLocStatData(Windows.Storage.StorageFile LocStatFile)
+        {
+            ObservableCollection<Location_Stat> dummyList = new ObservableCollection<Location_Stat>();
+            string[] data = null;
+            //Add the location data for the user once the csv file is loaded
+            foreach (string line in await Windows.Storage.FileIO.ReadLinesAsync(LocStatFile))
+            {
+                data = (line.Split(',')).ToArray();
+                Location_Stat DataPoint = Location_Stat.createLocStat((string)data[0], double.Parse(data[1]));
+                dummyList.Add(DataPoint);
+
+            }
+            return dummyList;
+        }
+
+        public static async Task<List<double>> AddSpeechStatData(Windows.Storage.StorageFile SpeechStatFile)
+        {
+            List<double> dummyList = new List<double>();
+            //Add the location data for the user once the csv file is loaded
+            foreach (string line in await Windows.Storage.FileIO.ReadLinesAsync(SpeechStatFile))
+            {
+                double DataPoint = double.Parse(line);
+                dummyList.Add(DataPoint);
+
+            }
+            return dummyList;
+        }
+
+
 
         //public static List<List<hog_records>> AddHOGData(Windows.Storage.StorageFile HogFile)
         //{

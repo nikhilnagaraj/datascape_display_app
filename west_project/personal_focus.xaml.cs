@@ -125,6 +125,7 @@ namespace west_project
                 Location_map.Visibility = Visibility.Visible;
                 Video_Spot.Visibility = Visibility.Visible;
                 Video_file_name = user.Video.Name;
+                
             }
 
 
