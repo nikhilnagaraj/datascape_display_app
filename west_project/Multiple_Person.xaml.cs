@@ -117,5 +117,11 @@ namespace west_project
         {
             Frame.Navigate(typeof(personal_focus),(User)e.ClickedItem);
         }
+
+        private void Analyse_Click(object sender, RoutedEventArgs e)
+        {
+           string name = (string)(((Button)sender).Tag);
+           Frame.Navigate(typeof(analysis), Users.FirstOrDefault<User>(x => x.Name == name));
+        }
     }
 }

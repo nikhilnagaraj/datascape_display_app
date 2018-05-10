@@ -20,6 +20,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>A34FEBA513883CAB69A5E94536BF7DEAE9419D04</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -95,6 +96,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="analysis.xaml.cs">
+      <DependentUpon>analysis.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -121,124 +125,8 @@
     <None Include="west_project_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Batsy.jpg" />
-    <Content Include="Assets\D28.gif" />
-    <Content Include="Assets\JapaneseAudio.mp3" />
     <Content Include="Assets\nop.jpg" />
     <Content Include="Assets\runner.gif" />
-    <Content Include="Assets\runner2.gif" />
-    <Content Include="Assets\TestPhotos\D1.gif" />
-    <Content Include="Assets\TestPhotos\D10.gif" />
-    <Content Include="Assets\TestPhotos\D100.gif" />
-    <Content Include="Assets\TestPhotos\D101.gif" />
-    <Content Include="Assets\TestPhotos\D102.gif" />
-    <Content Include="Assets\TestPhotos\D103.gif" />
-    <Content Include="Assets\TestPhotos\D104.gif" />
-    <Content Include="Assets\TestPhotos\D105.gif" />
-    <Content Include="Assets\TestPhotos\D106.gif" />
-    <Content Include="Assets\TestPhotos\D107.gif" />
-    <Content Include="Assets\TestPhotos\D108.gif" />
-    <Content Include="Assets\TestPhotos\D109.gif" />
-    <Content Include="Assets\TestPhotos\D11.gif" />
-    <Content Include="Assets\TestPhotos\D110.gif" />
-    <Content Include="Assets\TestPhotos\D111.gif" />
-    <Content Include="Assets\TestPhotos\D112.gif" />
-    <Content Include="Assets\TestPhotos\D12.gif" />
-    <Content Include="Assets\TestPhotos\D13.gif" />
-    <Content Include="Assets\TestPhotos\D14.gif" />
-    <Content Include="Assets\TestPhotos\D15.gif" />
-    <Content Include="Assets\TestPhotos\D16.gif" />
-    <Content Include="Assets\TestPhotos\D17.gif" />
-    <Content Include="Assets\TestPhotos\D18.gif" />
-    <Content Include="Assets\TestPhotos\D19.gif" />
-    <Content Include="Assets\TestPhotos\D2.gif" />
-    <Content Include="Assets\TestPhotos\D20.gif" />
-    <Content Include="Assets\TestPhotos\D21.gif" />
-    <Content Include="Assets\TestPhotos\D22.gif" />
-    <Content Include="Assets\TestPhotos\D23.gif" />
-    <Content Include="Assets\TestPhotos\D24.gif" />
-    <Content Include="Assets\TestPhotos\D25.gif" />
-    <Content Include="Assets\TestPhotos\D26.gif" />
-    <Content Include="Assets\TestPhotos\D27.gif" />
-    <Content Include="Assets\TestPhotos\D28.gif" />
-    <Content Include="Assets\TestPhotos\D29.gif" />
-    <Content Include="Assets\TestPhotos\D3.gif" />
-    <Content Include="Assets\TestPhotos\D30.gif" />
-    <Content Include="Assets\TestPhotos\D31.gif" />
-    <Content Include="Assets\TestPhotos\D32.gif" />
-    <Content Include="Assets\TestPhotos\D33.gif" />
-    <Content Include="Assets\TestPhotos\D34.gif" />
-    <Content Include="Assets\TestPhotos\D35.gif" />
-    <Content Include="Assets\TestPhotos\D36.gif" />
-    <Content Include="Assets\TestPhotos\D37.gif" />
-    <Content Include="Assets\TestPhotos\D38.gif" />
-    <Content Include="Assets\TestPhotos\D39.gif" />
-    <Content Include="Assets\TestPhotos\D4.gif" />
-    <Content Include="Assets\TestPhotos\D40.gif" />
-    <Content Include="Assets\TestPhotos\D41.gif" />
-    <Content Include="Assets\TestPhotos\D42.gif" />
-    <Content Include="Assets\TestPhotos\D43.gif" />
-    <Content Include="Assets\TestPhotos\D44.gif" />
-    <Content Include="Assets\TestPhotos\D45.gif" />
-    <Content Include="Assets\TestPhotos\D46.gif" />
-    <Content Include="Assets\TestPhotos\D47.gif" />
-    <Content Include="Assets\TestPhotos\D48.gif" />
-    <Content Include="Assets\TestPhotos\D49.gif" />
-    <Content Include="Assets\TestPhotos\D5.gif" />
-    <Content Include="Assets\TestPhotos\D50.gif" />
-    <Content Include="Assets\TestPhotos\D51.gif" />
-    <Content Include="Assets\TestPhotos\D52.gif" />
-    <Content Include="Assets\TestPhotos\D53.gif" />
-    <Content Include="Assets\TestPhotos\D54.gif" />
-    <Content Include="Assets\TestPhotos\D55.gif" />
-    <Content Include="Assets\TestPhotos\D56.gif" />
-    <Content Include="Assets\TestPhotos\D57.gif" />
-    <Content Include="Assets\TestPhotos\D58.gif" />
-    <Content Include="Assets\TestPhotos\D59.gif" />
-    <Content Include="Assets\TestPhotos\D6.gif" />
-    <Content Include="Assets\TestPhotos\D60.gif" />
-    <Content Include="Assets\TestPhotos\D61.gif" />
-    <Content Include="Assets\TestPhotos\D62.gif" />
-    <Content Include="Assets\TestPhotos\D63.gif" />
-    <Content Include="Assets\TestPhotos\D64.gif" />
-    <Content Include="Assets\TestPhotos\D65.gif" />
-    <Content Include="Assets\TestPhotos\D66.gif" />
-    <Content Include="Assets\TestPhotos\D67.gif" />
-    <Content Include="Assets\TestPhotos\D68.gif" />
-    <Content Include="Assets\TestPhotos\D69.gif" />
-    <Content Include="Assets\TestPhotos\D7.gif" />
-    <Content Include="Assets\TestPhotos\D70.gif" />
-    <Content Include="Assets\TestPhotos\D71.gif" />
-    <Content Include="Assets\TestPhotos\D72.gif" />
-    <Content Include="Assets\TestPhotos\D73.gif" />
-    <Content Include="Assets\TestPhotos\D74.gif" />
-    <Content Include="Assets\TestPhotos\D75.gif" />
-    <Content Include="Assets\TestPhotos\D76.gif" />
-    <Content Include="Assets\TestPhotos\D77.gif" />
-    <Content Include="Assets\TestPhotos\D78.gif" />
-    <Content Include="Assets\TestPhotos\D79.gif" />
-    <Content Include="Assets\TestPhotos\D8.gif" />
-    <Content Include="Assets\TestPhotos\D80.gif" />
-    <Content Include="Assets\TestPhotos\D81.gif" />
-    <Content Include="Assets\TestPhotos\D82.gif" />
-    <Content Include="Assets\TestPhotos\D83.gif" />
-    <Content Include="Assets\TestPhotos\D84.gif" />
-    <Content Include="Assets\TestPhotos\D85.gif" />
-    <Content Include="Assets\TestPhotos\D86.gif" />
-    <Content Include="Assets\TestPhotos\D87.gif" />
-    <Content Include="Assets\TestPhotos\D88.gif" />
-    <Content Include="Assets\TestPhotos\D89.gif" />
-    <Content Include="Assets\TestPhotos\D9.gif" />
-    <Content Include="Assets\TestPhotos\D90.gif" />
-    <Content Include="Assets\TestPhotos\D91.gif" />
-    <Content Include="Assets\TestPhotos\D92.gif" />
-    <Content Include="Assets\TestPhotos\D93.gif" />
-    <Content Include="Assets\TestPhotos\D94.gif" />
-    <Content Include="Assets\TestPhotos\D95.gif" />
-    <Content Include="Assets\TestPhotos\D96.gif" />
-    <Content Include="Assets\TestPhotos\D97.gif" />
-    <Content Include="Assets\TestPhotos\D98.gif" />
-    <Content Include="Assets\TestPhotos\D99.gif" />
     <Content Include="Assets\walker.gif" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -254,6 +142,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="analysis.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="File_Selection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

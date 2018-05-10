@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="west_project.analysis"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:west_project"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    mc:Ignorable="d">
+
+    <Grid Name="MainGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Maps:MapControl Name="Location_map" Grid.Row="0" Grid.Column="2" Margin="2,2,2,2"           
+                         Visibility="Visible">
+        </Maps:MapControl>
+
+        <Image Name="RunningImage" Height="50" Width="30" Visibility="Collapsed" Source="Assets/runner.gif" />
+        <Image Name="WalkingImage" Height="50" Width="30" Visibility="Collapsed" Source="Assets/walker.gif" />
+
+
+        <RelativePanel Name="Speech_Panel" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ProgressBar Name="speech_portion" Height="30" Width="200" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"/>
+            <TextBlock Name="Speech_Ratio_Title" Grid.Row="0" Grid.Column="1" RelativePanel.Above="speech_portion" Text="Percentage of Speech" RelativePanel.AlignHorizontalCenterWithPanel="True" FontSize="15" Padding="10"  />
+            <TextBlock Name="marker1" RelativePanel.LeftOf="speech_portion" Text="0" FontSize="15" RelativePanel.AlignVerticalCenterWithPanel="True" Padding="10"/>
+            <TextBlock Name="marker2" RelativePanel.RightOf="speech_portion" Text="100" FontSize="15" RelativePanel.AlignVerticalCenterWithPanel="True" Padding="10"/>
+            <TextBlock Name="Speech_ratio" Grid.Row="0" Grid.Column="1" RelativePanel.Below="speech_portion" Text="50%" RelativePanel.AlignHorizontalCenterWithPanel="True" FontSize="15" Padding="10"  />
+        </RelativePanel>
+
+        <Image Name="Face_spot" Grid.Row="0" Grid.Column="0" Margin="2,2,2,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+        <Grid Name="AudioVisualGrid" Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6.5*"/>
+                <RowDefinition Height="2.5*"/>
+            </Grid.RowDefinitions>
+
+            <!--Images-->
+            <MediaPlayerElement Name="Audio_player" Grid.Row="1"
+                                AutoPlay="False" AreTransportControlsEnabled="True"
+                                 Visibility="Collapsed" >
+                <MediaPlayerElement.TransportControls>
+                    <MediaTransportControls IsFullWindowButtonVisible="False" IsFullWindowEnabled="False"
+                                            IsStopButtonVisible="True" IsStopEnabled="True"/>
+                </MediaPlayerElement.TransportControls>
+            </MediaPlayerElement>
+
+            <Image x:Name="Image_spot" Grid.Row="0"
+                   
+                   Visibility="Collapsed">
+            </Image>
+            <!--Images-->
+
+            <!--Videos-->
+            <MediaPlayerElement x:Name="Video_Spot" AreTransportControlsEnabled="True" Grid.RowSpan="2" 
+                                RelativePanel.AlignTopWithPanel="True"              
+                                Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                 />
+        </Grid>
+
+    </Grid>
+</Page>

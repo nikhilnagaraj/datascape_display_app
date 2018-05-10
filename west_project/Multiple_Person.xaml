@@ -17,8 +17,9 @@
                     </Ellipse.Fill>
                 
                 </Ellipse>
-                <TextBlock Text="{Binding Name}" FontWeight="Bold" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse" Name="Name_Block" RelativePanel.AlignVerticalCenterWithPanel="True"/>
-                <TextBlock Text="{Binding UserId}" RelativePanel.Below="Name_Block" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse" Name="Id_Block" RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse" Name="Name_Block" />
+                <TextBlock Text="{Binding UserId}" RelativePanel.Below="Name_Block" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse" Name="Id_Block"/>
+                <Button Name="Analyse" Content="Analyze" Click="Analyse_Click" RelativePanel.Below="Id_Block" Margin="10,0,0,0" RelativePanel.RightOf="Image_Ellipse"  Tag="{Binding Name}"/>
             </RelativePanel>
             
         </DataTemplate>
@@ -32,7 +33,7 @@
         </Grid.RowDefinitions>
 
         <TextBox Name="SearchBar" MinWidth="250" PlaceholderText="Enter Search Query Here" BorderBrush="Black" Background="White" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        <Maps:MapControl Grid.Row="1" Name="MultiplePeopleMap" Margin="2,2,2,2" LandmarksVisible="True" Style="Aerial3DWithRoads">
+        <Maps:MapControl Grid.Row="1" Name="MultiplePeopleMap" Margin="2,2,2,2" LandmarksVisible="True">
            
         </Maps:MapControl>
         <GridView Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Auto"

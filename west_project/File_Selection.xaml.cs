@@ -89,12 +89,16 @@ namespace west_project
         {
             //Placeholders for loaded data
             Windows.Storage.StorageFile LocFile = null;
+            Windows.Storage.StorageFile LocStatFile = null;
             Windows.Storage.StorageFile TagFile = null;
             Windows.Storage.StorageFile AudFile = null;
+            Windows.Storage.StorageFile AudStatFile = null;
             Windows.Storage.StorageFolder ImageFolder = null;
+            Windows.Storage.StorageFolder FaceFolder = null;
             Windows.Storage.StorageFolder JourneyFolder = null;
+            Windows.Storage.StorageFile VideoFile = null;
 
-            //Boolean to check if required data is available
+            //Boolean to check if required tag data is available
             bool tagBool = false;
 
             //Load Journey Folder
@@ -110,29 +114,48 @@ namespace west_project
                 Windows.Storage.AccessCache.StorageApplicationPermissions.
                 FutureAccessList.AddOrReplace("JourneyFolder", JourneyFolder);
                 JourneyFS.Text = JourneyFolder.Path;
-                
 
-                ImageFolder = await JourneyFolder.GetFolderAsync("Images");
-                LocFile = await JourneyFolder.GetFileAsync("Location_Data.csv");
-
-                //Try getting Tag Data
                 try
                 {
-                    TagFile = await JourneyFolder.GetFileAsync("Tag_Data.csv");
-                    tagBool = true;
+                    //Get Image Data
+                    ImageFolder = await JourneyFolder.GetFolderAsync("Images");
+
+                    //Get Audio Data
+                    try
+                    {
+                        AudFile = await JourneyFolder.GetFileAsync("Audio.m4a");
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        AudFile = await JourneyFolder.GetFileAsync("Audio_Data.mp3");
+                    }
+
+                    //Try getting Tag Data
+                    try
+                    {
+                        TagFile = await JourneyFolder.GetFileAsync("Tag_Data.csv");
+                        tagBool = true;
+                    }
+                    catch
+                    {
+                        tagBool = false;
+                    }
+
                 }
+
                 catch
                 {
-                    tagBool = false;
+                    //Get Video File, if images not available
+                    VideoFile = await JourneyFolder.GetFileAsync("Video.mp4");
                 }
-                try
-                {
-                    AudFile = await JourneyFolder.GetFileAsync("Audio.m4a");
-                }
-                catch(FileNotFoundException)
-                {
-                    AudFile = await JourneyFolder.GetFileAsync("Audio_Data.mp3");
-                }
+                
+                //Get Location Data
+                LocFile = await JourneyFolder.GetFileAsync("Location_Data.csv");
+
+                
+                
+
+               
                 
                 int indexUser = Users.IndexOf(Users.Last(x => x.UserId == UserTag)); //Get the index of the user whose data is being loaded
 
@@ -140,15 +163,55 @@ namespace west_project
                 Users[indexUser].LocationData = await User.AddLocationData(LocFile);       //Add location data to the user
                 Users[indexUser].startPoint = User.CreateStartPoint(Users[indexUser].LocationData[0].Latitude, Users[indexUser].LocationData[0].Longitude);     //Add start point to the file
                 //Users[indexUser].UserId = await User.ChangeUserId(LocFile);
+
+                //Get Location Statistics if it exists
+                try
+                {
+                    LocStatFile = await JourneyFolder.GetFileAsync("Location_Stats.csv");
+                    Users[indexUser].LocationStat = await User.AddLocStatData(LocStatFile);  //Add location stat data to the user
+                }
+                catch
+                {
+                    Users[indexUser].LocationStat = null;
+                }
+                try
+                {
+                    AudStatFile = await JourneyFolder.GetFileAsync("Speech_Stats.csv");
+                    Users[indexUser].SpeechStats = await User.AddSpeechStatData(AudStatFile);  //Add location stat data to the user
+                }
+                catch
+                {
+                    Users[indexUser].SpeechStats = null;
+                }
+                //Get Face data if available
+                try
+                {
+                    FaceFolder = await JourneyFolder.GetFolderAsync("face_crop");
+                    Users[indexUser].Faces = FaceFolder;
+                }
+                catch
+                {
+                    Users[indexUser].Faces = null;
+                }
+
                 UserTag = Users[indexUser].UserId;
 
-                Users[indexUser].Image = ImageFolder;  //Add the user's image folder
-                Users[indexUser].Audio = AudFile;      //Add the user's audio file
-
-                if (tagBool)
+                if(VideoFile == null)
                 {
-                    Users[indexUser].Tags = await User.AddTagData(TagFile);       //Add Tag data to the user 
+                    Users[indexUser].Image = ImageFolder;  //Add the user's image folder
+                    Users[indexUser].Audio = AudFile;      //Add the user's audio file
+                    if (tagBool)
+                    {
+                        Users[indexUser].Tags = await User.AddTagData(TagFile);       //Add Tag data to the user 
+                    }
+
                 }
+                else
+                {
+                    Users[indexUser].Video = VideoFile; //Add user's video
+                }
+                
+
                
 
 
@@ -175,15 +238,10 @@ namespace west_project
         private void DoneDataButton_Click(object sender, RoutedEventArgs e)
         {
             DoneData.IsOpen = false;
-            if(Users.Count > 1)
-            {
-                Frame.Navigate(typeof(Multiple_Person), Users);
-            }
-            else
-           {
-                Frame.Navigate(typeof(personal_focus), Users[0]);
-           }
             
+            
+                Frame.Navigate(typeof(Multiple_Person), Users);
+           
            
         }
 
